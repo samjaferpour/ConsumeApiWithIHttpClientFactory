@@ -37,9 +37,19 @@ namespace ConsumeApiWithIHttpClientFactory.Services
             return new AddStudentResponse { Id = result.Id, Name = result.Name, Score = result.Score };
         }
 
-        public Task EditStudent(EditStudentDto request)
+        public async Task<EditStudentResponse> EditStudent(EditStudentRequest request)
         {
-            throw new NotImplementedException();
+            var client = _httpClientFactory.CreateClient("school");
+            var proxyRequest = new HttpRequestMessage(HttpMethod.Put, "api/Student/Edit");
+            proxyRequest.Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var proxyResponse = await client.SendAsync(proxyRequest);
+            if (!proxyResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Invalid Id");
+            }
+            var proxyResponseString = await proxyResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<EditStudentResponse>(proxyResponseString);
+            return result;
         }
 
         public async Task<List<GetStudentResponse>> GetAllStudents()
@@ -83,7 +93,8 @@ namespace ConsumeApiWithIHttpClientFactory.Services
                 throw new Exception("Invalid Id");
             }
             var proxyResponseString = await proxyResponse.Content.ReadAsStringAsync();
-            //var result = JsonConvert.DeserializeObject<>(proxyResponseString);
+            //var result = JsonConvert.DeserializeObject<RemoveStudentResponse>(proxyResponseString);
+            //return result;
         }
     }
 }

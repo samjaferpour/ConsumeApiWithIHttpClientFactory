@@ -39,5 +39,11 @@ namespace ConsumeApiWithIHttpClientFactory.Controllers
             await _services.RemoveStudent(id);
             return Ok("successfully Removed");
         }
+        [HttpPut]
+        public async Task<ActionResult<EditStudentResponse>> EditStudent([FromBody] EditStudentRequest request)
+        {
+            var result = await _services.EditStudent(request);
+            return result;
+        }
     }
 }
