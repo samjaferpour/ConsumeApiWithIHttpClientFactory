@@ -15,17 +15,23 @@ namespace ConsumeApiWithIHttpClientFactory.Controllers
         {
             this._services = services;
         }
-        //[HttpPost]
-        //public IActionResult AddStudent(AddStudentRequest request)
-        //{
-        //    var result = _services.a
-        //    return Ok(result);
-        //}
+        [HttpPost]
+        public async Task<ActionResult<AddStudentResponse>> AddStudent(AddStudentRequest request)
+        {
+            var result = await _services.AddStudent(request);
+            return Ok(result);
+        }
         [HttpGet]
         public async Task<ActionResult<List<GetStudentResponse>>> GetStudents()
         {
             var results = await _services.GetAllStudents();
             return Ok(results);
+        }
+        [HttpDelete]
+        public async Task<ActionResult> RemoveStudent([FromQuery] int id)
+        {
+            await _services.RemoveStudent(id);
+            return Ok("successfully Removed");
         }
     }
 }

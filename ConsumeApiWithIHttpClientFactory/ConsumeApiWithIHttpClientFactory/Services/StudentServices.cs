@@ -18,31 +18,24 @@ namespace ConsumeApiWithIHttpClientFactory.Services
         {
             this._httpClientFactory = httpClientFactory;
         }
+        public async Task<AddStudentResponse> AddStudent(AddStudentRequest request)
+        {
+            var client = _httpClientFactory.CreateClient("school");
 
+            var proxyRequest = new HttpRequestMessage(HttpMethod.Post, "api/Student/Add");
+            proxyRequest.Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
 
+            //proxyRequest.Headers.Add("Accept", "application/json");
 
-
-        //public async Task<GetStudentResponse> AddStudent(AddStudentRequest request)
-        //{
-        //    var client = _httpClientFactory.CreateClient();
-
-
-        //    var proxyRequest = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7206/api/Student/Add");
-        //    proxyRequest.Content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            
-
-        //    //proxyRequest.Headers.Add("Accept", "application/json");
-
-        //    var proxyResponse = await client.SendAsync(proxyRequest);
-        //    if (!proxyResponse.IsSuccessStatusCode)
-        //    {
-        //        throw new Exception("Not Found");
-        //    }
-        //    var proxyResponseString = await proxyResponse.Content.ReadAsStringAsync();
-        //    var result = JsonConvert.DeserializeObject<GetStudentResponse>(proxyResponseString);
-        //    return new GetStudentResponse { Id = result.Id, Name = result.Name, Score = result.Score };
-
-        //}
+            var proxyResponse = await client.SendAsync(proxyRequest);
+            if (!proxyResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Not Found");
+            }
+            var proxyResponseString = await proxyResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<AddStudentResponse>(proxyResponseString);
+            return new AddStudentResponse { Id = result.Id, Name = result.Name, Score = result.Score };
+        }
 
         public Task EditStudent(EditStudentDto request)
         {
@@ -70,10 +63,18 @@ namespace ConsumeApiWithIHttpClientFactory.Services
             throw new NotImplementedException();
         }
 
-        public Task RemoveStudent(int studentId)
+        public async Task RemoveStudent(int studentId)
         {
-            throw new NotImplementedException();
-        }
+            var client = _httpClientFactory.CreateClient("school");
+            var proxyRequest = new HttpRequestMessage(HttpMethod.Delete, $"api/Student/Remove?id={studentId}");
 
+            var proxyResponse = await client.SendAsync(proxyRequest);
+            if (!proxyResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Invalid Id");
+            }
+            var proxyResponseString = await proxyResponse.Content.ReadAsStringAsync();
+            //var result = JsonConvert.DeserializeObject<>(proxyResponseString);
+        }
     }
 }
