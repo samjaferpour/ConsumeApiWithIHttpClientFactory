@@ -27,6 +27,12 @@ namespace ConsumeApiWithIHttpClientFactory.Controllers
             var results = await _services.GetAllStudents();
             return Ok(results);
         }
+        [HttpGet]
+        public async Task<ActionResult<GetStudentResponse>> GetStudentById([FromQuery] int id)
+        {
+            var result = await _services.GetStudentById(id);
+            return Ok(result);
+        }
         [HttpDelete]
         public async Task<ActionResult> RemoveStudent([FromQuery] int id)
         {

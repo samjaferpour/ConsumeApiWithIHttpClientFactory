@@ -58,9 +58,18 @@ namespace ConsumeApiWithIHttpClientFactory.Services
             return results;
         }
 
-        public Task<GetStudentResponse> GetStudentById(int studentId)
+        public async Task<GetStudentResponse> GetStudentById(int studentId)
         {
-            throw new NotImplementedException();
+            var client = _httpClientFactory.CreateClient("school");
+            var proxyRequest = new HttpRequestMessage(HttpMethod.Get, $"api/Student/GetById?id={studentId}");
+            var proxyResponse = await client.SendAsync(proxyRequest);
+            if (!proxyResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Invalid Id");
+            }
+            var  proxyResponseString = await proxyResponse.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<GetStudentResponse>(proxyResponseString);
+            return result;
         }
 
         public async Task RemoveStudent(int studentId)
