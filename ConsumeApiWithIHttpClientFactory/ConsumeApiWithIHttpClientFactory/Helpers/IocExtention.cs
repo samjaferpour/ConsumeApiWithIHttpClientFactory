@@ -13,8 +13,10 @@ namespace ConsumeApiWithIHttpClientFactory.Helpers
             services.AddHttpClient("school", c =>
             {
                 c.BaseAddress = new Uri(siteSetting.ServiceUrl);
-                c.Timeout= TimeSpan.FromSeconds(100);
-            });
+                c.Timeout = TimeSpan.FromSeconds(100);
+            })
+                .AddPolicyHandler(Polly.PollyConfigs.GetStudentsRetryer())
+                .AddPolicyHandler(Polly.PollyConfigs.GetStudentsCircuitBreaker());
         }
         public static void AddCustomServices(this IServiceCollection services)
         {
